@@ -15,5 +15,8 @@ int main(int argc, char **argv)
     errno = EACCES;
     perror("Error is ");
 
+    printf("program invocation name is %s\n", program_invocation_name);
+    printf("program invocation short name is %s\n", program_invocation_short_name);
+
     return 0;
 }
