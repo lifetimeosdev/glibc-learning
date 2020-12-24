@@ -12,6 +12,7 @@ struct foo
 int main(int argc, char *argv[])
 {
     //mcheck(NULL);
+    mtrace();
 
     struct foo *ptr;
     ptr = (struct foo *)malloc(sizeof(struct foo));
@@ -21,14 +22,16 @@ int main(int argc, char *argv[])
 
     ptr = (struct foo *)realloc(ptr, 2 * sizeof(struct foo));
     ptr = (struct foo *)reallocarray(ptr, 2, sizeof(struct foo));
+    free(ptr);
     ptr = (struct foo *)calloc(4, sizeof(struct foo));
-
+    free(ptr);
     ptr = (struct foo *)aligned_alloc(8, sizeof(struct foo));
+    free(ptr);
     posix_memalign((void *)&ptr , 8, sizeof(struct foo));
+    //free(ptr);
     enum mcheck_status status = mprobe(ptr);
     printf("%d\n",status);
 
-    free(ptr);
     status = mprobe(ptr);
     printf("%d\n",status);
 
