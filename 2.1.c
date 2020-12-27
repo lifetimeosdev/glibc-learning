@@ -9,6 +9,7 @@
 void *xmalloc(size_t size);
 void my_obstack_alloc_failed(void);
 char *copystring(char *copystring);
+void add_string(struct obstack *, const char *, int);
 
 static struct obstack myobstack;
 
@@ -20,7 +21,18 @@ int main(int argc, char *argv[])
     printf("copystring result is %s.\n", s);
     char *s2 = obstack_copy(&myobstack, s, strlen(s));
     printf("obstack_copy resutl is %s.\n", s2);
-    obstack_free(&myobstack,NULL);
+    obstack_free(&myobstack, NULL);
+    int room = obstack_room(&myobstack);
+    printf("myobstack room is %d bytes.\n", room);
+    obstack_1grow_fast(&myobstack, 'a');
+    obstack_ptr_grow_fast(&myobstack, s);
+    obstack_int_grow_fast(&myobstack, 27);
+    obstack_blank_fast(&myobstack, sizeof(long));
+    add_string(&myobstack, s, strlen(s));
+    void *base = obstack_base(&myobstack);
+    void *next_free = obstack_next_free(&myobstack);
+    int size = obstack_object_size(&myobstack);
+    printf("size is %d ---- %ld\n", size, next_free - base);
     return 0;
 }
 
@@ -42,4 +54,25 @@ char *copystring(char *string)
     char *s = (char *)obstack_alloc(&myobstack, len);
     memcpy(s, string, len);
     return s;
+}
+
+void add_string(struct obstack *obstack, const char *ptr, int len)
+{
+    while (len > 0)
+    {
+        int room = obstack_room(obstack);
+        if (room == 0)
+        {
+            obstack_1grow(obstack, *ptr++);
+            len--;
+        }
+        else
+        {
+            if (room > len)
+                room = len;
+            len -= room;
+            while (room-- > 0)
+                obstack_1grow_fast(obstack, *ptr++);
+        }
+    }
 }
