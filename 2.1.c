@@ -8,7 +8,7 @@
 
 void *xmalloc(size_t size);
 void my_obstack_alloc_failed(void);
-char *copystring(char *copystring);
+char *copystring(char *);
 void add_string(struct obstack *, const char *, int);
 
 static struct obstack myobstack;
@@ -33,6 +33,20 @@ int main(int argc, char *argv[])
     void *next_free = obstack_next_free(&myobstack);
     int size = obstack_object_size(&myobstack);
     printf("size is %d ---- %ld\n", size, next_free - base);
+
+    int mask = obstack_alignment_mask(&myobstack);
+    printf("mask is %d\n", mask);
+    obstack_alignment_mask(&myobstack) = 0;
+    obstack_finish(&myobstack);
+    mask = obstack_alignment_mask(&myobstack);
+    printf("mask is %d\n", mask);
+    
+    int chunk_size = obstack_chunk_size(&myobstack);
+    printf("chunk size is %d\n", chunk_size);
+    obstack_chunk_size(&myobstack) = 666;
+    chunk_size = obstack_chunk_size(&myobstack);
+    printf("chunk size is %d\n", chunk_size);
+
     return 0;
 }
 
