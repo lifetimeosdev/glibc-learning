@@ -47,5 +47,9 @@ int main(int argc, char *argv[])
     strcat(s,"world");
     printf("strcat result is %s\n", s);
 
+    char t[100];
+    char *u = "hello, world";
+    strncpy(t,u, 13);
+    printf("strncpy result is %s\n",t);
     return 0;
 }
