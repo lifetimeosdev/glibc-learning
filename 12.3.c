@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <ctype.h>
+
+static int y_or_n_p(const char *question);
 
 int main(int argc, char *argv[])
 {
@@ -56,5 +59,72 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    fp = freopen("test.txt", "r", fp);
+    ret = fgetc(fp);
+    if (ret == EOF)
+    {
+        printf("fgetc error");
+        return 1;
+    }
+    else
+        printf("fgetc result is %c\n", (char)ret);
+
+    ret = fgetc_unlocked(fp);
+    if (ret == EOF)
+    {
+        printf("fgetc_unlocked error");
+        return 1;
+    }
+    else
+        printf("fgetc_unlocked result is %c\n", (char)ret);
+
+    ret = getc(fp);
+    if (ret == EOF)
+    {
+        printf("getc error");
+        return 1;
+    }
+    else
+        printf("getc result is %c\n", (char)ret);
+
+    ret = getc_unlocked(fp);
+    if (ret == EOF)
+    {
+        printf("getc_unlocked error");
+        return 1;
+    }
+    else
+        printf("getc_unlocked result is %c\n", (char)ret);
+
+    ret = getchar();
+    if (ret == EOF)
+    {
+        printf("getchar error");
+        return 1;
+    }
+    else
+        printf("getchar result is %c\n", (char)ret);
+
+    printf("your answer is %d\n", y_or_n_p("Delete?"));
+
     return 0;
+}
+
+int y_or_n_p(const char *question)
+{
+    fputs(question, stdout);
+    while (1)
+    {
+        int c, answer;
+        fputc(' ', stdout);
+        c = tolower(fgetc(stdin));
+        answer = c;
+        while (c != '\n' && c != EOF)
+            c = fgetc(stdin);
+        if (answer == 'y')
+            return 1;
+        if (answer == 'n')
+            return 0;
+        fputs("Please answer y or n:", stdout);
+    }
 }
