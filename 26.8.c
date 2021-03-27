@@ -21,6 +21,8 @@ void sigchld_handler(int signum)
         if (pid == 0)
             break;
         printf("child termination.pid=%d status=%d\n", pid, status);
+        int ret = WIFEXITED(status);
+        printf("child terminated with exit\n");
     }
     errno = serrno;
 }
@@ -30,7 +32,6 @@ int main(int argc, char *argv[])
     struct sigaction sa;
     sigset_t set;
     int pid;
-
     sigemptyset(&set);
     sa.sa_handler = sigchld_handler;
     sa.sa_flags = 0;
